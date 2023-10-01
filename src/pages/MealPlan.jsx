@@ -1,5 +1,6 @@
-import React from "react";
-import Meal from "../components/Meal";
+import { useState } from "react";
+// import Meal from "../components/Meal";
+import { Typography } from "@mui/material";
 
 const MealPlan = () => {
   const mealAmount = sessionStorage.getItem("mealAmount");
@@ -49,9 +50,18 @@ const MealPlan = () => {
   // };
   return (
     <>
-      {meals.forEach((meal) => {
-        <Meal meal={meal} />;
+      {meals.map((meal, index) => {
+        <div key={index}>
+          <Typography variant="h5">{meal.title}</Typography>
+          <img src={meal.image} alt={meal.title} />
+          <div>{meal.description}</div>
+          <div>{meal.nutrients}</div>
+        </div>;
       })}
+
+      <Typography variant="h5">
+        Meal Plan with {calories} Calories & {mealAmount} Meals
+      </Typography>
     </>
   );
 };

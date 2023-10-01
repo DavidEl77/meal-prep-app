@@ -13,6 +13,26 @@ const MealCreator = () => {
     navigate("/mealplan");
   };
 
+  const handleMealAmountChange = (e) => {
+    if (e.target.value > 5) {
+      e.target.value = 5;
+    } else if (e.target.value < 2) {
+      e.target.value = 2;
+    }
+
+    setMealAmount(e.target.value);
+  };
+
+  const handleCaloriesChange = (e) => {
+    if (e.target.value > 5000) {
+      e.target.value = 5000;
+    } else if (e.target.value < 1000) {
+      e.target.value = 1000;
+    }
+
+    setCalories(e.target.value);
+  };
+
   return (
     <div
       style={{
@@ -37,16 +57,16 @@ const MealCreator = () => {
         inputProps={{ min: 1000, max: 5000 }}
         initialLabelProps={{ shrink: true }}
         variant="standard"
-        onChange={(e) => setCalories(e.target.value)}
+        onChange={handleCaloriesChange}
       />
       <TextField
         id="standard-number"
         label="No. of Meals"
         type="number"
-        inputProps={{ min: 1, max: 6 }}
+        inputProps={{ min: 1, max: 5 }}
         initialLabelProps={{ shrink: true }}
         variant="standard"
-        onChange={(e) => setMealAmount(e.target.value)}
+        onChange={handleMealAmountChange}
       />
       <Button onClick={createMealPlan} variant="contained">
         Get your meal plan!
