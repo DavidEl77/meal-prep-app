@@ -1,11 +1,10 @@
-import { useState } from "react";
-// import Meal from "../components/Meal";
-import { Typography } from "@mui/material";
+import { useState, useEffect } from "react";
+import Meal from "../components/Meal";
 
 const MealPlan = () => {
   const mealAmount = sessionStorage.getItem("mealAmount");
   const calories = sessionStorage.getItem("calories");
-  const [mealPlan, setMealPlan] = useState(null);
+  const [mealPlan, setMealPlan] = useState([]);
   const [meals, setMeals] = useState([
     {
       title: "Meal 1",
@@ -29,39 +28,38 @@ const MealPlan = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // const getMealPlan = async () => {
-  //     setLoading(true);
-  //     try {
-  //         const response = await fetch(
-  //             `https://api.spoonacular.com/mealplanner/generate?apiKey=${process.env.REACT_APP_SPOONACULAR_API_KEY}&timeFrame=day&targetCalories=${calories}&diet=vegetarian&exclude=shellfish,olives`,
-  //             {
-  //                 method: "GET",
-  //                 headers: {
-  //                     "Content-Type": "application/json",
-  //                 },
-  //             }
-  //         );
-  //         const data = await response.json();
-  //         setMealPlan(data);
-  //         setLoading(false);
-  //     } catch (error) {
-  //         setError(error);
-  //     }
-  // };
+  const getMealPlan = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(
+        `https://api.spoonacular.com/mealplanner/generate?apiKey=0a973538b4084d2db83256900948a994&timeFrame=day&targetCalories=${calories}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      // ApiKey: process.env.REACT_APP_SPOONACULAR_API_KEY
+      const data = await response.json();
+      setMealPlan(data);
+      setLoading(false);
+    } catch (error) {
+      setError(error);
+    }
+  };
+
+  useEffect(() => {
+    getMealPlan();
+  }, []);
+
+  console.log(mealPlan);
+
   return (
     <>
-      {meals.map((meal, index) => {
-        <div key={index}>
-          <Typography variant="h5">{meal.title}</Typography>
-          <img src={meal.image} alt={meal.title} />
-          <div>{meal.description}</div>
-          <div>{meal.nutrients}</div>
-        </div>;
+      {mealPlan?.meals?.map((meal) => {
+        return <Meal key={meal.id} meal={meal} />;
       })}
-
-      <Typography variant="h5">
-        Meal Plan with {calories} Calories & {mealAmount} Meals
-      </Typography>
     </>
   );
 };

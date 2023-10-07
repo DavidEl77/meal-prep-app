@@ -1,4 +1,5 @@
 import { TextField, Button, Typography } from "@mui/material";
+import debounce from "lodash.debounce";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -26,12 +27,15 @@ const MealCreator = () => {
   const handleCaloriesChange = (e) => {
     if (e.target.value > 5000) {
       e.target.value = 5000;
-    } else if (e.target.value < 1000) {
-      e.target.value = 1000;
+    } else if (e.target.value < 1500) {
+      e.target.value = 1500;
     }
 
     setCalories(e.target.value);
   };
+
+  const debouncedHandleMealAmountChange = debounce(handleMealAmountChange, 800);
+  const debouncedHandleCaloriesChange = debounce(handleCaloriesChange, 800);
 
   return (
     <div
@@ -54,10 +58,10 @@ const MealCreator = () => {
         id="standard-number"
         label="Calories Amount"
         type="number"
-        inputProps={{ min: 1000, max: 5000 }}
+        inputProps={{ min: 1500, max: 5000 }}
         initialLabelProps={{ shrink: true }}
         variant="standard"
-        onChange={handleCaloriesChange}
+        onChange={debouncedHandleCaloriesChange}
       />
       <TextField
         id="standard-number"
@@ -66,7 +70,7 @@ const MealCreator = () => {
         inputProps={{ min: 1, max: 5 }}
         initialLabelProps={{ shrink: true }}
         variant="standard"
-        onChange={handleMealAmountChange}
+        onChange={debouncedHandleMealAmountChange}
       />
       <Button onClick={createMealPlan} variant="contained">
         Get your meal plan!
