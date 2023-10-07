@@ -1,8 +1,8 @@
 import { Typography } from "@mui/material";
 
 const Meal = ({ meal }) => {
-  const imgIdArr = meal.sourceUrl.split("-");
-  const imgId = imgIdArr[imgIdArr.length - 1];
+  //   const imgIdArr = meal.sourceUrl.split("-");
+  //   const imgId = imgIdArr[imgIdArr.length - 1];
 
   return (
     <div style={{ margin: "40px" }}>
@@ -12,17 +12,13 @@ const Meal = ({ meal }) => {
       >
         {meal.title}
       </Typography>
-      <img
-        src={`https://spoonacular.com/recipeImages/${imgId}-556x370.jpg`}
-        alt={meal.title}
-      />
-      {/* <div>{meal.description}</div>
+      <img src={meal.image} alt={meal.title} />
       <div style={{ margin: "20px" }}>
-        {`Calories: ${meal.nutrients.calories}`} <br />
-        {`Fat: ${meal.nutrients.fat}`} <br />
-        {`Carbs: ${meal.nutrients.carbs}`} <br />
-        {`Protein: ${meal.nutrients.protein}`} <br />
-      </div> */}
+        {`Calories: ${meal.calories}`} <br />
+        {`Carbs: ${meal.carbs}`} <br />
+        {`Fat: ${meal.fat}`} <br />
+        {`Protein: ${meal.protein}`} <br />
+      </div>
     </div>
   );
 };
