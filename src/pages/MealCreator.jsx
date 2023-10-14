@@ -34,8 +34,11 @@ const MealCreator = () => {
     setCalories(e.target.value);
   };
 
-  const debouncedHandleMealAmountChange = debounce(handleMealAmountChange, 800);
-  const debouncedHandleCaloriesChange = debounce(handleCaloriesChange, 800);
+  const debouncedHandleMealAmountChange = debounce(
+    handleMealAmountChange,
+    2000
+  );
+  const debouncedHandleCaloriesChange = debounce(handleCaloriesChange, 2000);
 
   return (
     <div
