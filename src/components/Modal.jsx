@@ -36,10 +36,26 @@ export default function BasicModal({ meal, mealInfo, fetchMealInfo }) {
           <Typography id="modal-modal-title" variant="h5" component="h2">
             {meal.title}
           </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 3 }}>
+          <div
+            id="modal-modal-description"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              flexWrap: "wrap",
+              marginTop: 7,
+            }}
+          >
+            {mealInfo &&
+              mealInfo.ingredients.map((ingredient) => {
+                return (
+                  <div key={ingredient.id}>
+                    <strong>{ingredient.name}</strong> <br />
+                    {`Amount: ${ingredient.amount} ${ingredient.unit}`} <br />
+                  </div>
+                );
+              })}
             {mealInfo && mealInfo.instructions}
-            dada
-          </Typography>
+          </div>
         </Box>
       </Modal>
     </div>

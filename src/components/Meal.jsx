@@ -15,7 +15,7 @@ const Meal = ({ meal }) => {
   };
 
   return (
-    <div style={{ margin: "40px" }}>
+    <div style={{ margin: "40px", width: "250px" }}>
       <Typography
         style={{ margin: "10px", textDecoration: "underline" }}
         variant="h5"

@@ -31,7 +31,7 @@ const MealPlan = () => {
       <div
         style={{
           display: "flex",
-          flexWrap: mealPlan.length > 4 ? "wrap" : "nowrap",
+          flexWrap: "wrap",
           justifyContent: "space-around",
         }}
       >

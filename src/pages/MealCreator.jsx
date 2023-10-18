@@ -1,44 +1,54 @@
 import { TextField, Button, Typography } from "@mui/material";
-import debounce from "lodash.debounce";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const MealCreator = () => {
   const [mealAmount, setMealAmount] = useState(null);
   const [calories, setCalories] = useState(null);
+  const [isCaloriesTooLow, setIsCaloriesTooLow] = useState(false);
+  const [isCaloriesTooHigh, setIsCaloriesTooHigh] = useState(false);
+  const [isMealsTooLow, setIsMealsTooLow] = useState(false);
+  const [isMealsTooHigh, setIsMealsTooHigh] = useState(false);
   const navigate = useNavigate();
 
   const createMealPlan = () => {
-    sessionStorage.setItem("mealAmount", mealAmount);
-    sessionStorage.setItem("calories", calories);
-    navigate("/mealplan");
-  };
-
-  const handleMealAmountChange = (e) => {
-    if (e.target.value > 5) {
-      e.target.value = 5;
-    } else if (e.target.value < 2) {
-      e.target.value = 2;
+    if (
+      calories < 1500 ||
+      calories > 5000 ||
+      mealAmount < 2 ||
+      mealAmount > 5
+    ) {
+      if (calories < 1500) {
+        setIsCaloriesTooLow(true);
+      }
+      if (calories >= 1500) {
+        setIsCaloriesTooLow(false);
+      }
+      if (calories > 5000) {
+        setIsCaloriesTooHigh(true);
+      }
+      if (calories <= 5000) {
+        setIsCaloriesTooHigh(false);
+      }
+      if (mealAmount < 2) {
+        setIsMealsTooLow(true);
+      }
+      if (mealAmount >= 2) {
+        setIsMealsTooLow(false);
+      }
+      if (mealAmount > 5) {
+        setIsMealsTooHigh(true);
+      }
+      if (mealAmount <= 5) {
+        setIsMealsTooHigh(false);
+      }
+      return;
+    } else {
+      parseInt(sessionStorage.setItem("mealAmount", mealAmount));
+      parseInt(sessionStorage.setItem("calories", calories));
+      navigate("/mealplan");
     }
-
-    setMealAmount(e.target.value);
   };
-
-  const handleCaloriesChange = (e) => {
-    if (e.target.value > 5000) {
-      e.target.value = 5000;
-    } else if (e.target.value < 1500) {
-      e.target.value = 1500;
-    }
-
-    setCalories(e.target.value);
-  };
-
-  const debouncedHandleMealAmountChange = debounce(
-    handleMealAmountChange,
-    2000
-  );
-  const debouncedHandleCaloriesChange = debounce(handleCaloriesChange, 2000);
 
   return (
     <div
@@ -57,25 +67,54 @@ const MealCreator = () => {
       <Typography variant="h5">
         Enter Amount of Calories and Meals to Eat in a Day:
       </Typography>
+
       <TextField
-        id="standard-number"
-        label="Calories Amount"
+        error={isCaloriesTooHigh || isCaloriesTooLow}
+        id={
+          isCaloriesTooHigh || isCaloriesTooLow
+            ? "standard-number-error-helper-text"
+            : "standard-number"
+        }
+        helperText={
+          isCaloriesTooHigh
+            ? "Maximum amount of calories is 5000"
+            : isCaloriesTooLow
+            ? "Minimum amount of calories is 1500"
+            : ""
+        }
+        label="Calories Amount (1500-5000)"
         type="number"
-        inputProps={{ min: 1500, max: 5000 }}
         initialLabelProps={{ shrink: true }}
         variant="standard"
-        onChange={debouncedHandleCaloriesChange}
+        onChange={(e) => setCalories(e.target.value)}
       />
       <TextField
-        id="standard-number"
-        label="No. of Meals"
+        error={isMealsTooHigh || isMealsTooLow}
+        id={
+          isMealsTooHigh || isMealsTooLow
+            ? "standard-number-error-helper-text"
+            : "standard-number"
+        }
+        helperText={
+          isMealsTooHigh
+            ? "Maximum amount of meals is 5"
+            : isMealsTooLow
+            ? "Minimum amount of meals is 2"
+            : ""
+        }
+        label="No. of Meals (2-5)"
         type="number"
-        inputProps={{ min: 1, max: 5 }}
         initialLabelProps={{ shrink: true }}
         variant="standard"
-        onChange={debouncedHandleMealAmountChange}
+        onChange={(e) => setMealAmount(e.target.value)}
       />
-      <Button onClick={createMealPlan} variant="contained">
+      <Button
+        onClick={createMealPlan}
+        variant="contained"
+        // disabled={
+        //   calories < 1500 || calories > 5000 || mealAmount < 2 || mealAmount > 5
+        // }
+      >
         Get your meal plan!
       </Button>
     </div>

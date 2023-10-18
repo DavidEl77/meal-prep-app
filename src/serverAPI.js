@@ -1,113 +1,68 @@
 import axios from "axios";
 
+// API URLs
 const BASE_URL = "https://api.spoonacular.com/recipes/";
 
 const API_URLS = {
   getMealPlan: (calories) =>
     `${BASE_URL}findByNutrients?apiKey=4ac6ba08a94740a6b14d6784d424cec3&maxCalories=${
       calories / 2.5
-    }&minCalories=${calories / 6}&minProtein=40&number=20`,
+    }&minCalories=${calories / 6}&minProtein=40&number=100`,
   getMealInfo: (id) =>
     `${BASE_URL}${id}/information?apiKey=4ac6ba08a94740a6b14d6784d424cec3`,
 };
 
-const calculateBestMealCombination = (
-  mealsToCalculate,
-  maxCalorieCountTillNow,
-  requestedCalories
-) => {
-  const calorieSum = mealsToCalculate.reduce((acc, meal) => {
-    acc += meal.calories;
-    return acc;
-  }, 0);
-
-  if (
-    (calorieSum > maxCalorieCountTillNow ||
-      calorieSum >= requestedCalories - 100) &&
-    calorieSum <= requestedCalories + 100
-  ) {
-    if (calorieSum > maxCalorieCountTillNow)
-      maxCalorieCountTillNow = calorieSum;
-
-    return { mealsToCalculate, maxCalorieCountTillNow };
-  }
-
-  return null;
-};
-
+// Functions & Algorithms
 const findMeals = (meals, requestedCalories, numOfMeals) => {
+  const generateCombinations = (start, combination, combinations) => {
+    if (combination.length === numOfMeals) {
+      combinations.push(combination);
+      return;
+    }
+
+    for (let i = start; i < meals.length; i++) {
+      generateCombinations(i + 1, [...combination, meals[i]], combinations);
+    }
+
+    return combinations;
+  };
+
+  const combinations2 = generateCombinations(0, [], []);
+
   let maxCalorieCountTillNow = 0;
   let bestMealPlan = [];
 
-  for (let i = 0; i < meals.length - 2; i++) {
-    for (let j = i + 1; j < meals.length - 1; j++) {
-      if (numOfMeals > 2) {
-        for (let k = j + 1; k < meals.length; k++) {
-          if (numOfMeals > 3) {
-            for (let l = k + 1; l < meals.length; l++) {
-              if (numOfMeals > 4) {
-                for (let m = l + 1; m < meals.length; m++) {
-                  const mealPlanSuggestions = calculateBestMealCombination(
-                    [meals[i], meals[j], meals[k], meals[l], meals[m]],
-                    maxCalorieCountTillNow,
-                    requestedCalories
-                  );
+  combinations2.forEach((mealPlan) => {
+    const calorieSum = mealPlan.reduce((acc, meal) => acc + meal.calories, 0);
 
-                  if (mealPlanSuggestions) {
-                    bestMealPlan = mealPlanSuggestions.mealsToCalculate;
-                    maxCalorieCountTillNow =
-                      mealPlanSuggestions.maxCalorieCountTillNow;
-                  }
-                }
-              } else {
-                const mealPlanSuggestions = calculateBestMealCombination(
-                  [meals[i], meals[j], meals[k], meals[l]],
-                  maxCalorieCountTillNow,
-                  requestedCalories
-                );
-
-                if (mealPlanSuggestions) {
-                  bestMealPlan = mealPlanSuggestions.mealsToCalculate;
-                  maxCalorieCountTillNow =
-                    mealPlanSuggestions.maxCalorieCountTillNow;
-                }
-              }
-            }
-          } else {
-            const mealPlanSuggestions = calculateBestMealCombination(
-              [meals[i], meals[j], meals[k]],
-              maxCalorieCountTillNow,
-              requestedCalories
-            );
-
-            if (mealPlanSuggestions) {
-              bestMealPlan = mealPlanSuggestions.mealsToCalculate;
-              maxCalorieCountTillNow =
-                mealPlanSuggestions.maxCalorieCountTillNow;
-            }
-          }
-        }
-      } else {
-        const mealPlanSuggestions = calculateBestMealCombination(
-          [meals[i], meals[j]],
-          maxCalorieCountTillNow,
-          requestedCalories
-        );
-
-        if (mealPlanSuggestions) {
-          bestMealPlan = mealPlanSuggestions.mealsToCalculate;
-          maxCalorieCountTillNow = mealPlanSuggestions.maxCalorieCountTillNow;
-        }
+    if (
+      (calorieSum > maxCalorieCountTillNow ||
+        calorieSum >= requestedCalories - 100) &&
+      calorieSum <= requestedCalories + 100
+    ) {
+      if (calorieSum > maxCalorieCountTillNow) {
+        maxCalorieCountTillNow = calorieSum;
+        bestMealPlan = mealPlan;
       }
     }
-  }
+  });
+
   return bestMealPlan;
 };
 
+// const generateCombinations = (() => {
+//   const memo = {};
+
+//   const generateCombinations = (start, combination, combinations) => {
+
+//   };
+// })();
+
+// API Calls
 export const getMealPlan = async () => {
   try {
-    const calories = sessionStorage.getItem("calories");
-    const mealAmount = sessionStorage.getItem("mealAmount");
+    const calories = parseInt(sessionStorage.getItem("calories") ?? "1500");
+    const mealAmount = parseInt(sessionStorage.getItem("mealAmount") ?? "2");
 
     const response = await axios.get(API_URLS.getMealPlan(calories));
     const meals = response.data;
@@ -132,25 +87,19 @@ export const getMealInfo = async (id) => {
     const response = await axios.get(API_URLS.getMealInfo(id));
     const meal = response.data;
 
-    // const mealInfo = {
-    //   id: meal.id,
-    //   title: meal.title,
-    //   image: meal.image,
-    //   calories: meal.nutrition.nutrients[0].amount,
-    //   protein: meal.nutrition.nutrients[8].amount,
-    //   carbs: meal.nutrition.nutrients[3].amount,
-    //   fat: meal.nutrition.nutrients[1].amount,
-    //   ingredients: meal.extendedIngredients.map((ingredient) => ({
-    //     id: ingredient.id,
-    //     name: ingredient.name,
-    //     image: ingredient.image,
-    //     amount: ingredient.amount,
-    //     unit: ingredient.unit,
-    //   })),
-    //   instructions: meal.instructions,
-    // };
+    const mealInfo = {
+      id: meal.id,
+      ingredients: meal.extendedIngredients.map((ingredient) => ({
+        id: ingredient.id,
+        name: ingredient.name,
+        image: ingredient.image,
+        amount: ingredient.amount,
+        unit: ingredient.unit,
+      })),
+      instructions: meal.instructions,
+    };
 
-    return meal;
+    return mealInfo;
   } catch (error) {
     console.error(error);
   }
