@@ -50,13 +50,56 @@ const findMeals = (meals, requestedCalories, numOfMeals) => {
   return bestMealPlan;
 };
 
-// const generateCombinations = (() => {
+// const findMeals = (meals, requestedCalories, numOfMeals) => {
 //   const memo = {};
 
-//   const generateCombinations = (start, combination, combinations) => {
+//   const generateCombinations = (start, combination) => {
+//     const key = `${start}-${combination.join(",")}`;
 
+//     if (key in memo) {
+//       return memo[key];
+//     }
+
+//     if (combination.length === numOfMeals) {
+//       memo[key] = combination;
+//       return combination;
+//     }
+
+//     for (let i = start; i < meals.length; i++) {
+//       const result = generateCombinations(i + 1, [...combination, meals[i]]);
+
+//       if (result) {
+//         memo[key] = result;
+//         return result;
+//       }
+//     }
+
+//     memo[key] = null;
+//     return null;
 //   };
-// })();
+
+//   generateCombinations(0, []);
+
+//   let maxCalorieCountTillNow = 0;
+//   let bestMealPlan = [];
+
+//   Object.values(memo).forEach((mealPlan) => {
+//     const calorieSum = mealPlan.reduce((acc, meal) => acc + meal.calories, 0);
+
+//     if (
+//       (calorieSum > maxCalorieCountTillNow ||
+//         calorieSum >= requestedCalories - 100) &&
+//       calorieSum <= requestedCalories + 100
+//     ) {
+//       if (calorieSum > maxCalorieCountTillNow) {
+//         maxCalorieCountTillNow = calorieSum;
+//         bestMealPlan = mealPlan;
+//       }
+//     }
+//   });
+
+//   return bestMealPlan;
+// };
 
 // API Calls
 export const getMealPlan = async () => {

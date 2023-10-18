@@ -1,5 +1,5 @@
 import { TextField, Button, Typography } from "@mui/material";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 const MealCreator = () => {
@@ -11,6 +11,7 @@ const MealCreator = () => {
   const [isMealsTooHigh, setIsMealsTooHigh] = useState(false);
   const navigate = useNavigate();
 
+  // Function to create meal plan
   const createMealPlan = () => {
     if (
       calories < 1500 ||
@@ -49,6 +50,21 @@ const MealCreator = () => {
       navigate("/mealplan");
     }
   };
+
+  // Button Ref for handling Enter key press
+  const buttonRef = useRef(null);
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      buttonRef.current.click();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   return (
     <div
@@ -111,6 +127,7 @@ const MealCreator = () => {
       <Button
         onClick={createMealPlan}
         variant="contained"
+        ref={buttonRef}
         // disabled={
         //   calories < 1500 || calories > 5000 || mealAmount < 2 || mealAmount > 5
         // }
