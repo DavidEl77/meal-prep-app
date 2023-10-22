@@ -8,8 +8,14 @@ const API_URLS = {
     `${BASE_URL}findByNutrients?apiKey=4ac6ba08a94740a6b14d6784d424cec3&maxCalories=${
       calories / 2.5
     }&minCalories=${calories / 6}&minProtein=40&number=100`,
+
   getMealInfo: (id) =>
     `${BASE_URL}${id}/information?apiKey=4ac6ba08a94740a6b14d6784d424cec3`,
+
+  getSubtituteMeal: (calories) =>
+    `${BASE_URL}findByNutrients?apiKey=4ac6ba08a94740a6b14d6784d424cec3&maxCalories=${
+      calories + 50
+    }&minCalories=${calories - 50}&minProtein=40&number=10`,
 };
 
 // Functions & Algorithms
@@ -143,6 +149,31 @@ export const getMealInfo = async (id) => {
     };
 
     return mealInfo;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getSubtituteMeal = async (calories, prevMealID, prevMealPlan) => {
+  try {
+    const response = await axios.get(API_URLS.getSubtituteMeal(calories));
+    const meal = response.data.find(
+      (meal) =>
+        meal.id !== prevMealID &&
+        !prevMealPlan.map((meal) => meal.id).includes(meal.id)
+    );
+
+    const newMeal = {
+      id: meal.id,
+      title: meal.title,
+      image: meal.image,
+      calories: meal.calories,
+      protein: meal.protein,
+      carbs: meal.carbs,
+      fat: meal.fat,
+    };
+
+    return newMeal;
   } catch (error) {
     console.error(error);
   }

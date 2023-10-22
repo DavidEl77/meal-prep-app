@@ -6,6 +6,7 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import { useState, useEffect, useRef } from "react";
+import debounce from "lodash.debounce";
 import { useNavigate } from "react-router-dom";
 
 const MealCreator = () => {
@@ -22,8 +23,6 @@ const MealCreator = () => {
   const [isVegan, setIsVegan] = useState(false);
   const [isGlutenFree, setIsGlutenFree] = useState(false);
   const [isDairyFree, setIsDairyFree] = useState(false);
-  // const [isKetogenic, setIsKetogenic] = useState(false);
-  // const [isPaleo, setIsPaleo] = useState(false);
 
   const navigate = useNavigate();
 
@@ -82,6 +81,33 @@ const MealCreator = () => {
     };
   }, []);
 
+  // Debounce function for handling calories input
+  const debouncedHandleCaloriesChange = debounce((e) => {
+    setCalories(parseInt(e.target.value));
+    if (e.target.value < 1500) {
+      setIsCaloriesTooLow(true);
+    } else if (e.target.value >= 1500) {
+      setIsCaloriesTooLow(false);
+    } else if (e.target.value > 5000) {
+      setIsCaloriesTooHigh(true);
+    } else if (e.target.value <= 5000) {
+      setIsCaloriesTooHigh(false);
+    }
+  }, 800);
+
+  const debouncedHandleMealAmountChange = debounce((e) => {
+    setMealAmount(parseInt(e.target.value));
+    if (e.target.value < 2) {
+      setIsMealsTooLow(true);
+    } else if (e.target.value >= 2) {
+      setIsMealsTooLow(false);
+    } else if (e.target.value > 5) {
+      setIsMealsTooHigh(true);
+    } else if (e.target.value <= 5) {
+      setIsMealsTooHigh(false);
+    }
+  }, 800);
+
   return (
     <div
       style={{
@@ -90,8 +116,8 @@ const MealCreator = () => {
         color: "black",
         backgroundColor: "lightblue",
         borderRadius: "50px",
-        height: "70vh",
-        width: "60vw",
+        height: "65vh",
+        width: "55vw",
         padding: "50px",
         justifyContent: "space-around",
         gap: "20px",
@@ -126,7 +152,7 @@ const MealCreator = () => {
           type="number"
           initialLabelProps={{ shrink: true }}
           variant="standard"
-          onChange={(e) => setCalories(e.target.value)}
+          onChange={debouncedHandleCaloriesChange}
         />
         <TextField
           error={isMealsTooHigh || isMealsTooLow}
@@ -146,19 +172,31 @@ const MealCreator = () => {
           type="number"
           initialLabelProps={{ shrink: true }}
           variant="standard"
-          onChange={(e) => setMealAmount(e.target.value)}
+          onChange={debouncedHandleMealAmountChange}
         />
       </div>
       <Typography variant="h5">Select Diet Type/Preferences:</Typography>
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
+          display: "flex",
+          flexDirection: "column",
+          flexWrap: "wrap",
           padding: "20px",
-          justifyContent: "center",
-          justifyItems: "center",
+          justifyContent: "space-between",
         }}
       >
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={isVegan}
+              onChange={(e) => {
+                setIsVegan(e.target.checked);
+                setIsVegetarian(false);
+              }}
+            />
+          }
+          label="Vegan"
+        />
         <FormControlLabel
           control={
             <Checkbox
@@ -183,18 +221,6 @@ const MealCreator = () => {
         <FormControlLabel
           control={
             <Checkbox
-              checked={isVegan}
-              onChange={(e) => {
-                setIsVegan(e.target.checked);
-                setIsVegetarian(false);
-              }}
-            />
-          }
-          label="Vegan"
-        />
-        <FormControlLabel
-          control={
-            <Checkbox
               checked={isDairyFree}
               onChange={(e) => setIsDairyFree(e.target.checked)}
             />
@@ -206,9 +232,9 @@ const MealCreator = () => {
         onClick={createMealPlan}
         variant="contained"
         ref={buttonRef}
-        // disabled={
-        //   calories < 1500 || calories > 5000 || mealAmount < 2 || mealAmount > 5
-        // }
+        disabled={
+          calories < 1500 || calories > 5000 || mealAmount < 2 || mealAmount > 5
+        }
       >
         Get your meal plan!
       </Button>

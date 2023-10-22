@@ -1,19 +1,40 @@
 import { Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import Meal from "../components/Meal";
-import { getMealPlan } from "../serverAPI";
+import { getMealPlan, getSubtituteMeal } from "../serverAPI";
+import { BallTriangle } from "react-loader-spinner";
 
 const MealPlan = () => {
   const [mealPlan, setMealPlan] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchMealPlan = async () => {
     try {
-      setLoading(true);
+      setIsLoading(true);
       const mealPlan = await getMealPlan();
-      setLoading(false);
+      setIsLoading(false);
       setMealPlan(mealPlan);
+    } catch (error) {
+      setError(error);
+    }
+  };
+
+  const substituteMeal = async (meal) => {
+    try {
+      setIsLoading(true);
+      const newMeal = await getSubtituteMeal(meal.calories, meal.id, mealPlan);
+      if (newMeal) {
+        const newMealPlan = mealPlan.map((mealPlanMeal) => {
+          if (mealPlanMeal.id === meal.id) {
+            return newMeal;
+          } else {
+            return mealPlanMeal;
+          }
+        });
+        setMealPlan(newMealPlan);
+      }
+      setIsLoading(false);
     } catch (error) {
       setError(error);
     }
@@ -21,34 +42,51 @@ const MealPlan = () => {
 
   useEffect(() => {
     fetchMealPlan();
+    setIsLoading(false);
   }, []);
 
   return (
     <>
+      {error && <div>{error}</div>}
       <Typography variant="h3" color={"chocolate"}>
         Meal Plan
       </Typography>
-      <div
-        style={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "space-around",
-        }}
-      >
-        {mealPlan &&
-          mealPlan.map((meal) => {
-            return <Meal key={meal.id} meal={meal} />;
-          })}
-      </div>
-      <div>
-        <h3>
-          Calories:{" "}
-          {mealPlan &&
-            mealPlan.reduce((acc, meal) => {
-              return acc + meal.calories;
-            }, 0)}
-        </h3>
-      </div>
+      {isLoading ? (
+        <div>
+          <BallTriangle />
+        </div>
+      ) : (
+        <div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              flexWrap: "wrap",
+              justifyContent: "space-around",
+            }}
+          >
+            {mealPlan &&
+              mealPlan.map((meal) => {
+                return (
+                  <Meal
+                    key={meal.id}
+                    meal={meal}
+                    substituteMeal={substituteMeal}
+                  />
+                );
+              })}
+          </div>
+          <div>
+            <h3>
+              Calories:{" "}
+              {mealPlan &&
+                mealPlan.reduce((acc, meal) => {
+                  return acc + meal.calories;
+                }, 0)}
+            </h3>
+          </div>
+        </div>
+      )}
     </>
   );
 };
