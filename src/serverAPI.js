@@ -154,13 +154,12 @@ export const getMealInfo = async (id) => {
   }
 };
 
-export const getSubtituteMeal = async (calories, prevMealID, prevMealPlan) => {
+export const getSubtituteMeal = async (calories, prevMealPlan) => {
   try {
+    const mealsIdsToExclude = prevMealPlan.map((meal) => meal.id);
     const response = await axios.get(API_URLS.getSubtituteMeal(calories));
     const meal = response.data.find(
-      (meal) =>
-        meal.id !== prevMealID &&
-        !prevMealPlan.map((meal) => meal.id).includes(meal.id)
+      (meal) => !mealsIdsToExclude.includes(meal.id)
     );
 
     const newMeal = {

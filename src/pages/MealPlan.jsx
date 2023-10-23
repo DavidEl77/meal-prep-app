@@ -23,7 +23,7 @@ const MealPlan = () => {
   const substituteMeal = async (meal) => {
     try {
       setIsLoading(true);
-      const newMeal = await getSubtituteMeal(meal.calories, meal.id, mealPlan);
+      const newMeal = await getSubtituteMeal(meal.calories, mealPlan);
       if (newMeal) {
         const newMealPlan = mealPlan.map((mealPlanMeal) => {
           if (mealPlanMeal.id === meal.id) {
