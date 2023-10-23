@@ -11,7 +11,6 @@ const MealPlan = () => {
 
   const fetchMealPlan = async () => {
     try {
-      setIsLoading(true);
       const mealPlan = await getMealPlan();
       setIsLoading(false);
       setMealPlan(mealPlan);
@@ -42,7 +41,6 @@ const MealPlan = () => {
 
   useEffect(() => {
     fetchMealPlan();
-    setIsLoading(false);
   }, []);
 
   return (
@@ -52,8 +50,8 @@ const MealPlan = () => {
         Meal Plan
       </Typography>
       {isLoading ? (
-        <div>
-          <BallTriangle />
+        <div style={{ justifyContent: "center", alignItems: "center" }}>
+          <BallTriangle color="white" />
         </div>
       ) : (
         <div>
