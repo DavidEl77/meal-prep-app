@@ -15,7 +15,7 @@ const API_URLS = {
   getSubtituteMeal: (calories) =>
     `${BASE_URL}findByNutrients?apiKey=4ac6ba08a94740a6b14d6784d424cec3&maxCalories=${
       calories + 50
-    }&minCalories=${calories - 50}&minProtein=40&number=10`,
+    }&minCalories=${calories - 50}&minProtein=40&number=100`,
 };
 
 // Functions & Algorithms
@@ -154,10 +154,9 @@ export const getMealInfo = async (id) => {
   }
 };
 
-export const getSubtituteMeal = async (calories, prevMealPlan) => {
+export const getSubtituteMeal = async (mealCalories, mealsIdsToExclude) => {
   try {
-    const mealsIdsToExclude = prevMealPlan.map((meal) => meal.id);
-    const response = await axios.get(API_URLS.getSubtituteMeal(calories));
+    const response = await axios.get(API_URLS.getSubtituteMeal(mealCalories));
     const meal = response.data.find(
       (meal) => !mealsIdsToExclude.includes(meal.id)
     );

@@ -6,6 +6,7 @@ import { BallTriangle } from "react-loader-spinner";
 
 const MealPlan = () => {
   const [mealPlan, setMealPlan] = useState([]);
+  const [mealsIdToExclude, setMealsIdToExclude] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -14,6 +15,7 @@ const MealPlan = () => {
       const mealPlan = await getMealPlan();
       setIsLoading(false);
       setMealPlan(mealPlan);
+      setMealsIdToExclude(mealPlan.map((meal) => meal.id));
     } catch (error) {
       setError(error);
     }
@@ -22,7 +24,7 @@ const MealPlan = () => {
   const substituteMeal = async (meal) => {
     try {
       setIsLoading(true);
-      const newMeal = await getSubtituteMeal(meal.calories, mealPlan);
+      const newMeal = await getSubtituteMeal(meal.calories, mealsIdToExclude);
       if (newMeal) {
         const newMealPlan = mealPlan.map((mealPlanMeal) => {
           if (mealPlanMeal.id === meal.id) {
@@ -32,6 +34,7 @@ const MealPlan = () => {
           }
         });
         setMealPlan(newMealPlan);
+        setMealsIdToExclude([...mealsIdToExclude, newMeal.id]);
       }
       setIsLoading(false);
     } catch (error) {
