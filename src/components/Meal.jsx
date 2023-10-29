@@ -16,20 +16,42 @@ const Meal = ({ meal, substituteMeal }) => {
   };
 
   return (
-    <div style={{ margin: "40px", width: "250px" }}>
-      <Typography
-        style={{ margin: "10px", textDecoration: "underline" }}
-        variant="h5"
+    <div
+      style={{
+        width: "250px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-around",
+        height: "500px",
+        gap: "10px",
+      }}
+    >
+      <div
+        style={{
+          height: 50,
+          overflowY: "hidden",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
       >
-        {meal.title}
-      </Typography>
+        <h3>{meal.title}</h3>
+      </div>
 
-      <div style={{ display: "inline-block", position: "relative" }}>
-        <img src={meal.image} alt={meal.title} />
+      <div style={{ position: "relative" }}>
+        <img
+          src={meal.image}
+          alt={meal.title}
+          style={{
+            width: "250px",
+            height: "200px",
+          }}
+        />
         <AutorenewIcon
           onClick={() => substituteMeal(meal)}
           sx={{
             backgroundColor: "black",
+            color: "white",
             position: "absolute",
             right: 0,
             margin: "10px",
@@ -40,9 +62,8 @@ const Meal = ({ meal, substituteMeal }) => {
           }}
         />
       </div>
-      <br />
       <Modal meal={meal} mealInfo={mealInfo} fetchMealInfo={fetchMealInfo} />
-      <div style={{ margin: "20px" }}>
+      <div style={{}}>
         <strong>{`Calories: ${meal.calories} (1 Serving)`}</strong> <br />
         {`Carbs: ${meal.carbs}`} <br />
         {`Fat: ${meal.fat}`} <br />

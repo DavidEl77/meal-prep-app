@@ -4,18 +4,18 @@ import axios from "axios";
 const BASE_URL = "https://api.spoonacular.com/recipes/";
 
 const API_URLS = {
-  getMealPlan: (calories) =>
-    `${BASE_URL}findByNutrients?apiKey=4ac6ba08a94740a6b14d6784d424cec3&maxCalories=${
-      calories / 2.5
-    }&minCalories=${calories / 6}&minProtein=40&number=100`,
+  getMealPlan: (dailyCalories) =>
+    `${BASE_URL}findByNutrients?apiKey=0a973538b4084d2db83256900948a994&maxCalories=${
+      dailyCalories / 2.5
+    }&minCalories=${dailyCalories / 6}&minProtein=40&number=100`,
 
   getMealInfo: (id) =>
-    `${BASE_URL}${id}/information?apiKey=4ac6ba08a94740a6b14d6784d424cec3`,
+    `${BASE_URL}${id}/information?apiKey=0a973538b4084d2db83256900948a994`,
 
-  getSubtituteMeal: (calories) =>
-    `${BASE_URL}findByNutrients?apiKey=4ac6ba08a94740a6b14d6784d424cec3&maxCalories=${
-      calories + 50
-    }&minCalories=${calories - 50}&minProtein=40&number=100`,
+  getSubtituteMeal: (mealCalories) =>
+    `${BASE_URL}findByNutrients?apiKey=0a973538b4084d2db83256900948a994&maxCalories=${
+      mealCalories + 50
+    }&minCalories=${mealCalories - 50}&minProtein=40&number=100`,
 };
 
 // Functions & Algorithms
